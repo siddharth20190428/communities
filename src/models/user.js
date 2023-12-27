@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const UserSchema = mongoose.Schema(
     {
-        id: {
+        _id: {
             type: String,
             primaryKey: true,
             default: () => Snowflake.generate(),
