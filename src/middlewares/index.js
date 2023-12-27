@@ -1,34 +1,26 @@
 const formatResponse = (req, res, next) => {
-    res.apiSuccess = (data, accessToken, respCode) => {
-        const response = {
-            status: true,
-            content: {
-                data,
-                meta: {
-                    access_token: accessToken,
-                },
-            },
-        };
-        res.status(respCode).json(response);
+  res.apiSuccess = (data, accessToken, respCode) => {
+    const response = {
+      status: true,
+      content: {
+        data,
+        meta: {
+          access_token: accessToken,
+        },
+      },
     };
+    res.status(respCode).json(response);
+  };
 
-    res.apiError = (error, errCode) => {
-        const response = {
-            status: false,
-            errors: Array.isArray(error)
-                ? error
-                : [
-                      {
-                          param: "general",
-                          message: error.message,
-                          code: "UNEXPECTED_ERROR",
-                      },
-                  ],
-        };
-        res.status(errCode).json(response);
+  res.apiError = (error, errCode) => {
+    const response = {
+      status: false,
+      errors: Array.isArray(error) ? error : [error],
     };
+    res.status(errCode).json(response);
+  };
 
-    next();
+  next();
 };
 
 module.exports = formatResponse;
