@@ -52,8 +52,8 @@ const signup = async (req, res) => {
       const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
       res.apiSuccess(
         { id: newUser.id, name, email, created_at: newUser.createdAt },
-        token,
-        200
+        200,
+        token
       );
     }
   } catch (error) {
@@ -87,7 +87,7 @@ const signin = async (req, res) => {
         400
       );
 
-    const token = jwt.sign({ id: validUser.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     res.apiSuccess(
       {
         id: validUser.id,
@@ -95,12 +95,32 @@ const signin = async (req, res) => {
         email: validUser.email,
         created_at: validUser.createdAt,
       },
-      token,
-      200
+      200,
+      token
     );
   } catch (error) {
     res.apiError(error, 500);
   }
 };
 
-module.exports = { signup, signin };
+const getMe = async (req, res) => {
+  const { authorization } = req.headers;
+
+  const decoded = jwt.verify(authorization, process.env.JWT_SECRET); // Replace with your actual secret key
+  if (!decoded)
+    return res.apiError(
+      {
+        message: "You need to sign in to proceed.",
+        code: "NOT_SIGNEDIN",
+      },
+      401
+    );
+
+  const user = await User.findById(decoded.id).select(
+    "-password -__v -updatedAt"
+  );
+
+  res.apiSuccess(user, 200);
+};
+
+module.exports = { signup, signin, getMe };

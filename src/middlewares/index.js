@@ -1,18 +1,19 @@
 const formatResponse = (req, res, next) => {
-  res.apiSuccess = (data, accessToken, respCode) => {
-    const response = {
+  res.apiSuccess = (data, respCode, accessToken = null) => {
+    let response = {
       status: true,
       content: {
         data,
-        meta: {
-          access_token: accessToken,
-        },
       },
     };
+
+    if (accessToken !== null)
+      response.content.meta = { access_token: accessToken };
+
     res.status(respCode).json(response);
   };
 
-  res.apiError = (error, errCode) => {
+  res.apiError = (error, errCode = 500) => {
     const response = {
       status: false,
       errors: Array.isArray(error) ? error : [error],
