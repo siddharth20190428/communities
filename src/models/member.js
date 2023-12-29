@@ -24,7 +24,7 @@ const MemberSchema = mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 const Member = mongoose.model("Member", MemberSchema);
