@@ -1,5 +1,5 @@
 const formatResponse = (req, res, next) => {
-  res.apiSuccess = (data, respCode, accessToken = null) => {
+  res.apiSuccess = (data, respCode = 200, accessToken = null) => {
     let response = {
       status: true,
       content: {

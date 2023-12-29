@@ -52,7 +52,6 @@ const signup = async (req, res) => {
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       res.apiSuccess(
         { id: newUser.id, name, email, created_at: newUser.createdAt },
-        200,
         token
       );
     }
@@ -95,7 +94,6 @@ const signin = async (req, res) => {
         email: validUser.email,
         created_at: validUser.createdAt,
       },
-      200,
       token
     );
   } catch (error) {
@@ -106,7 +104,7 @@ const signin = async (req, res) => {
 const getMe = async (req, res) => {
   const { authorization } = req.headers;
 
-  const decoded = jwt.verify(authorization, process.env.JWT_SECRET); // Replace with your actual secret key
+  const decoded = jwt.verify(authorization, process.env.JWT_SECRET);
   if (!decoded)
     return res.apiError(
       {
@@ -120,7 +118,7 @@ const getMe = async (req, res) => {
     "-password -__v -updatedAt"
   );
 
-  res.apiSuccess(user, 200);
+  res.apiSuccess(user);
 };
 
 module.exports = { signup, signin, getMe };

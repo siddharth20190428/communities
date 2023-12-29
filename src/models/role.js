@@ -15,7 +15,7 @@ const RoleSchema = mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 const Role = mongoose.model("Role", RoleSchema);
