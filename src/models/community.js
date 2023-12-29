@@ -19,7 +19,7 @@ const CommunitySchema = mongoose.Schema(
       unique: true,
     },
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "User",
       required: true,
     },

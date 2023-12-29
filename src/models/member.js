@@ -9,17 +9,17 @@ const MemberSchema = mongoose.Schema(
       default: () => Snowflake.generate(),
     },
     community: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "Community",
       required: true,
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "User",
       required: true,
     },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "Role",
       required: true,
     },

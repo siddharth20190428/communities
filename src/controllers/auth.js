@@ -97,7 +97,7 @@ const signin = async (req, res) => {
       { access_token: token }
     );
   } catch (error) {
-    res.apiError(error, 500);
+    res.apiError(error);
   }
 };
 
