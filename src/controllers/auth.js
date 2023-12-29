@@ -52,7 +52,7 @@ const signup = async (req, res) => {
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       res.apiSuccess(
         { id: newUser.id, name, email, created_at: newUser.createdAt },
-        token
+        { access_token: token }
       );
     }
   } catch (error) {
@@ -94,7 +94,7 @@ const signin = async (req, res) => {
         email: validUser.email,
         created_at: validUser.createdAt,
       },
-      token
+      { access_token: token }
     );
   } catch (error) {
     res.apiError(error, 500);
@@ -114,7 +114,7 @@ const getMe = async (req, res) => {
       401
     );
 
-  const user = await User.findById(decoded._id).select(
+  const user = await User.findById(decoded.id).select(
     "-password -__v -updatedAt"
   );
 

@@ -24,7 +24,7 @@ const CommunitySchema = mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 const Community = mongoose.model("Community", CommunitySchema);

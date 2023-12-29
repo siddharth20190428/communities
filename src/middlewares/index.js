@@ -8,9 +8,6 @@ const formatResponse = (req, res, next) => {
     };
     if (meta !== null) response.content.meta = meta;
 
-    if (accessToken !== null)
-      response.content.meta = { access_token: accessToken };
-
     res.status(respCode).json(response);
   };
 
