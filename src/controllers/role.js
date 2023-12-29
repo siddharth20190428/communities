@@ -27,4 +27,21 @@ const createRole = async (req, res) => {
   }
 };
 
-module.exports = { createRole };
+const getAll = async (req, res, next) => {
+  try {
+    const PAGE_SIZE = 10;
+
+    const page = 1;
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const results = await Role.find({}).skip(skip).limit(PAGE_SIZE).exec();
+    const totalDocs = await Role.countDocuments();
+    const totalPages = Math.ceil(totalDocs / PAGE_SIZE);
+
+    res.apiSuccess(results, { total: totalDocs, pages: totalPages, page });
+  } catch (error) {
+    res.apiError(error);
+  }
+};
+
+module.exports = { createRole, getAll };

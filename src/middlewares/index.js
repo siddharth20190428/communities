@@ -1,11 +1,12 @@
 const formatResponse = (req, res, next) => {
-  res.apiSuccess = (data, respCode = 200, accessToken = null) => {
+  res.apiSuccess = (data, meta, respCode = 200, accessToken = null) => {
     let response = {
       status: true,
       content: {
         data,
       },
     };
+    if (meta !== null) response.content.meta = meta;
 
     if (accessToken !== null)
       response.content.meta = { access_token: accessToken };
