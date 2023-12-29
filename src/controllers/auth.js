@@ -49,7 +49,7 @@ const signup = async (req, res) => {
       await newUser.save();
 
       // Responds with the access token
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       res.apiSuccess(
         { id: newUser.id, name, email, created_at: newUser.createdAt },
         200,
@@ -116,7 +116,7 @@ const getMe = async (req, res) => {
       401
     );
 
-  const user = await User.findById(decoded.id).select(
+  const user = await User.findById(decoded._id).select(
     "-password -__v -updatedAt"
   );
 
