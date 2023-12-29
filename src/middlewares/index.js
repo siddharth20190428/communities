@@ -13,7 +13,7 @@ const formatResponse = (req, res, next) => {
   res.apiError = (error, errCode = 500) => {
     const response = {
       status: false,
-      errors: Array.isArray(error) ? error : [error],
+      errors: [error],
     };
     res.status(errCode).json(response);
   };

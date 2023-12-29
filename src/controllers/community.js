@@ -8,6 +8,17 @@ const createCommunity = async (req, res) => {
     const { name } = req.body;
     const { authorization } = req.headers;
 
+    // check if name's length is greater than 2
+    if (name.length < 2)
+      return res.apiError(
+        {
+          param: "name",
+          message: "Name should be at least 2 characters.",
+          code: "INVALID_INPUT",
+        },
+        400
+      );
+
     // checking if user is signedIn
     const currentUser = jwt.verify(authorization, process.env.JWT_SECRET);
     if (!currentUser)
@@ -77,7 +88,7 @@ const getAllCommunityMembers = async (req, res) => {
     const filters = { community: communityId };
 
     // fetching all the members of the community and populating them with their name and role
-    const results = await Member.find()
+    const results = await Member.find(filters)
       .populate("user", "name")
       .populate("role", "name")
       .select("-updatedAt")
@@ -86,7 +97,7 @@ const getAllCommunityMembers = async (req, res) => {
       .exec();
 
     // totaldocuments and pages
-    const totalDocs = await Community.countDocuments(filters);
+    const totalDocs = await Member.countDocuments(filters);
     const totalPages = Math.ceil(totalDocs / PAGE_SIZE);
 
     res.apiSuccess(results, { total: totalDocs, pages: totalPages, page });
@@ -159,8 +170,6 @@ const getAllJoinedCommunities = async (req, res) => {
     const communities = await Community.find({
       _id: { $in: communityIdsArray },
     }).populate("owner", "name");
-    console.log(communityIds);
-    console.log(communities);
 
     // totaldocuments and pages
     const totalDocs = await Member.countDocuments(filters);

@@ -10,51 +10,51 @@ const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const errors = [];
-
     // Check for invalid input
-    if (name.length < 2) {
-      errors.push({
-        param: "name",
-        message: "Name should be at least 2 characters.",
-        code: "INVALID_INPUT",
-      });
-    }
-    if (password.length < 2) {
-      errors.push({
-        param: "password",
-        message: "Password should be at least 2 characters.",
-        code: "INVALID_INPUT",
-      });
-    }
+    if (name.length < 2)
+      return res.apiError(
+        {
+          param: "name",
+          message: "Name should be at least 2 characters.",
+          code: "INVALID_INPUT",
+        },
+        400
+      );
+
+    if (password.length < 2)
+      return res.apiError(
+        {
+          param: "password",
+          message: "Password should be at least 2 characters.",
+          code: "INVALID_INPUT",
+        },
+        400
+      );
 
     // Check if the email is already registered
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      errors.push({
-        param: "email",
-        message: "User with this email address already exists.",
-        code: "RESOURCE_EXISTS",
-      });
-    }
-
-    if (errors.length > 0) {
-      // If there are errors, send the error response
-      res.apiError(errors, 400);
-    } else {
-      const hashedPassword = await bcryptjs.hash(password, 10);
-      const newUser = new User({ name, email, password: hashedPassword });
-
-      // Save the user to the database
-      await newUser.save();
-
-      // Responds with the access token
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-      res.apiSuccess(
-        { id: newUser.id, name, email, created_at: newUser.createdAt },
-        { access_token: token }
+    if (existingUser)
+      return res.apiError(
+        {
+          param: "email",
+          message: "User with this email address already exists.",
+          code: "RESOURCE_EXISTS",
+        },
+        400
       );
-    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
+
+    // Save the user to the database
+    await newUser.save();
+
+    // Responds with the access token
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    res.apiSuccess(
+      { id: newUser.id, name, email, created_at: newUser.createdAt },
+      { access_token: token }
+    );
   } catch (error) {
     res.apiError(error);
   }
@@ -104,21 +104,23 @@ const signin = async (req, res) => {
 const getMe = async (req, res) => {
   const { authorization } = req.headers;
 
-  const decoded = jwt.verify(authorization, process.env.JWT_SECRET);
-  if (!decoded)
-    return res.apiError(
-      {
-        message: "You need to sign in to proceed.",
-        code: "NOT_SIGNEDIN",
-      },
-      401
-    );
+  try {
+    const decoded = jwt.verify(authorization, process.env.JWT_SECRET);
+    if (!decoded)
+      return res.apiError(
+        {
+          message: "You need to sign in to proceed.",
+          code: "NOT_SIGNEDIN",
+        },
+        401
+      );
 
-  const user = await User.findById(decoded.id).select(
-    "-password -__v -updatedAt"
-  );
+    const user = await User.findById(decoded.id).select("-password -updatedAt");
 
-  res.apiSuccess(user);
+    res.apiSuccess(user);
+  } catch (error) {
+    res.apiError(error);
+  }
 };
 
 module.exports = { signup, signin, getMe };

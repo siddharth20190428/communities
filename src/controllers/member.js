@@ -45,7 +45,7 @@ const addMember = async (req, res) => {
       });
 
     // checking if the member already exists in the community
-    const memberAlready = await Member.findOne({ user });
+    const memberAlready = await Member.findOne({ user, community });
     if (memberAlready)
       return res.apiError({
         message: "User is already added in the community.",
@@ -69,7 +69,10 @@ const deleteMember = async (req, res) => {
 
   try {
     // checking if the member exists
-    const validMember = await Member.findById(memberId);
+    const validMember = await Member.findById(memberId).populate(
+      "role",
+      "name"
+    );
     if (!validMember)
       return res.apiError({
         message: "Member not found.",
@@ -84,8 +87,10 @@ const deleteMember = async (req, res) => {
     );
     // checking if the current user is the communiy admin or community moderator
     if (
-      currentUser.role.name !== "Community Admin" ||
-      currentUser.role.name !== "Community Moderator"
+      !(
+        currentUser.role.name !== "Community Admin" ||
+        currentUser.role.name !== "Community Moderator"
+      )
     )
       return res.apiError({
         message: "You are not authorized to perform this action.",

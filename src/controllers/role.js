@@ -3,31 +3,27 @@ const Role = require("../models/role");
 const createRole = async (req, res) => {
   const { name } = req.body;
 
-  const errors = [];
+  try {
+    // Check for invalid input
+    if (name.length < 2) {
+      return res.apiError({
+        param: "name",
+        message: "Name should be at least 2 characters.",
+        code: "INVALID_INPUT",
+      });
+    }
 
-  // Check for invalid input
-  if (name.length < 2) {
-    errors.push({
-      param: "name",
-      message: "Name should be at least 2 characters.",
-      code: "INVALID_INPUT",
-    });
-  }
-
-  if (errors.length > 0) {
-    // If there are errors, send the error response
-    res.apiError(errors, 400);
-  } else {
     const newRole = new Role({ name });
 
     // Save the Role to the database
     await newRole.save();
-
     res.apiSuccess(newRole);
+  } catch (error) {
+    res.apiError(error);
   }
 };
 
-const getAll = async (req, res, next) => {
+const getAllRoles = async (req, res, next) => {
   try {
     const PAGE_SIZE = 10;
 
@@ -44,4 +40,4 @@ const getAll = async (req, res, next) => {
   }
 };
 
-module.exports = { createRole, getAll };
+module.exports = { createRole, getAllRoles };
