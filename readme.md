@@ -58,6 +58,16 @@ Use this command to install all the required dependencies.
 npm i
 ```
 
+### Connection to Mongo
+
+- Create a .env file in the root directory
+- Paste the following code
+
+```
+MONGO_URI = "mongodb+srv://Test1:testpassword@app.mrlylew.mongodb.net/tif?retryWrites=true&w=majority"
+JWT_SECRET = "randomstrongsecret"
+```
+
 ### Run
 
 Use this command to run the react app
